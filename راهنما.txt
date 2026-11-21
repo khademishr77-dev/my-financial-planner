@@ -1,0 +1,8 @@
+برای افزودن تایپ زنده اعداد فارسی به نسخه کامل فعلی پلنر:
+
+1) فایل number-format-live.js را در ریشه مخزن GitHub کنار index.html بارگذاری کنید.
+2) در index.html، در انتهای فایل و درست پیش از </body>، این خط را اضافه کنید:
+<script src="./number-format-live.js"></script>
+3) در sw.js مقدار CACHE_NAME را از planner-me-v9 به planner-me-v10 تغییر دهید و Commit changes بزنید.
+
+این وصله روی فیلدهای .money-input و .count-input کار می‌کند؛ با منطق فعلی parseLocalizedNumber سازگار است و مقدار عددی را برای محاسبات نگه می‌دارد. اطلاعات localStorage را پاک نکنید.
