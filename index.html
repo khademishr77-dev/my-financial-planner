@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6eaf0">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon-192.png">
+<title>پلنر من | برنامه‌ریزی و مدیریت مالی</title>
+<style>
+:root{--bg:#fbf7f8;--card:#fff;--ink:#453943;--muted:#8b7b86;--pink:#d99bb5;--pink2:#f6e7ee;--green:#dcece2;--line:#f0e5ea;--gold:#f4e8c9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;font-size:14px}
+header{padding:25px 18px 20px;background:linear-gradient(135deg,#f7e8ef,#f8f0e7);border-radius:0 0 28px 28px}
+h1{font-size:22px;margin:0 0 7px}header p{margin:0;color:#806e79;line-height:1.8}
+main{padding:16px;max-width:720px;margin:auto}.tabs{display:flex;gap:7px;overflow:auto;padding:5px 0 13px}
+.tabs button{white-space:nowrap;border:0;border-radius:20px;padding:10px 14px;background:#f1e8ed;color:var(--ink);font:inherit}
+.tabs button.active{background:var(--pink);color:white}
+.panel{display:none}.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:16px;margin:0 0 13px;box-shadow:0 5px 18px #6c40500a}
+.card h2{font-size:16px;margin:0 0 13px}.muted{color:var(--muted);font-size:12px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#fff;border:1px solid var(--line);padding:14px;border-radius:16px}.stat b{display:block;font-size:18px;margin-top:8px;direction:ltr;text-align:right}
+label{display:block;margin:10px 0 6px;color:#796976;font-size:12px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #eadde4;border-radius:12px;background:#fff;font:inherit;color:var(--ink);outline:none}
+textarea{min-height:75px;resize:vertical}
+button.primary{background:var(--pink);color:#fff;border:0;border-radius:12px;padding:12px 16px;font:inherit;width:100%;margin-top:12px}
+button.soft{background:var(--pink2);color:var(--ink);border:0;border-radius:10px;padding:8px 11px;font:inherit}
+.row{display:flex;gap:9px}.row>*{flex:1;min-width:0}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}
+.amount{direction:ltr;white-space:nowrap;font-weight:bold}.income{color:#43845e}.expense{color:#b65d78}
+.check{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--line)}.check input{width:auto}
+.smallbtn{border:0;background:transparent;color:#b65d78;font-size:12px}
+footer{text-align:center;color:#a18e99;font-size:11px;padding:20px}
+</style>
+</head>
+<body>
+<header><h1>پلنر من 🌷</h1><p>با آرامش برنامه‌ریزی کن، دخل‌وخرجت رو بشناس و قدم‌به‌قدم به هدف‌هات برس.</p></header>
+<main>
+<nav class="tabs">
+<button class="active" data-tab="home">خانه</button><button data-tab="money">دخل‌وخرج</button><button data-tab="tasks">برنامه‌ها</button><button data-tab="habits">عادت‌ها</button><button data-tab="goals">هدف‌های مالی</button>
+</nav>
+<section id="home" class="panel active">
+<div class="stats">
+<div class="stat"><span class="muted">موجودی خالص ثبت‌شده</span><b id="balance">۰</b></div>
+<div class="stat"><span class="muted">درآمد این ماه</span><b id="incomeTotal" class="income">۰</b></div>
+<div class="stat"><span class="muted">هزینه این ماه</span><b id="expenseTotal" class="expense">۰</b></div>
+<div class="stat"><span class="muted">کارهای انجام‌شده</span><b id="taskDone">۰</b></div>
+</div>
+<div class="card" style="margin-top:13px"><h2>یادداشت امروز</h2><textarea id="dailyNote" placeholder="امروز چه چیزی برات مهمه؟"></textarea><button class="primary" onclick="saveNote()">ذخیره یادداشت</button></div>
+<div class="card"><h2>نگاه روزانه</h2><p class="muted">قدم‌های کوچک و پیوسته، تغییرهای بزرگ می‌سازن. امروز فقط روی یک قدم تمرکز کن. ✨</p></div>
+</section>
+<section id="money" class="panel">
+<div class="card"><h2>ثبت تراکنش</h2>
+<div class="row"><div><label>نوع</label><select id="kind"><option value="income">درآمد</option><option value="expense">هزینه</option></select></div><div><label>مبلغ (تومان)</label><input id="amount" type="number" min="0" inputmode="numeric" placeholder="مثلاً ۵۰۰۰۰۰"></div></div>
+<label>عنوان</label><input id="desc" placeholder="مثلاً حقوق، خرید خانه...">
+<label>تاریخ</label><input id="date" type="date">
+<button class="primary" onclick="addTransaction()">ثبت تراکنش</button></div>
+<div class="card"><h2>تراکنش‌های اخیر</h2><div id="transactions"></div></div>
+</section>
+<section id="tasks" class="panel">
+<div class="card"><h2>برنامه و کارها</h2><label>عنوان کار</label><input id="taskText" placeholder="کاری که باید انجام بدم..."><div class="row"><div><label>تاریخ</label><input id="taskDate" type="date"></div><div><label>اولویت</label><select id="priority"><option>معمولی</option><option>مهم</option><option>ضروری</option></select></div></div><button class="primary" onclick="addTask()">افزودن به برنامه</button></div>
+<div class="card"><h2>فهرست کارها</h2><div id="tasksList"></div></div>
+</section>
+<section id="habits" class="panel">
+<div class="card"><h2>پیگیری عادت‌ها</h2><label>عادت جدید</label><input id="habitText" placeholder="مثلاً نوشیدن ۸ لیوان آب"><button class="primary" onclick="addHabit()">افزودن عادت</button></div>
+<div class="card"><h2>عادت‌های من</h2><div id="habitsList"></div><p class="muted">هر روز که انجامش دادی، تیکش رو بزن. وضعیت روزانه در همین گوشی ذخیره می‌شه.</p></div>
+</section>
+<section id="goals" class="panel">
+<div class="card"><h2>هدف مالی جدید</h2><label>عنوان هدف</label><input id="goalText" placeholder="مثلاً پس‌انداز برای طلا"><label>مبلغ هدف (تومان)</label><input id="goalAmount" type="number" inputmode="numeric" placeholder="مبلغ موردنظر"><button class="primary" onclick="addGoal()">ثبت هدف</button></div>
+<div class="card"><h2>هدف‌های من</h2><div id="goalsList"></div></div>
+</section>
+<footer>اطلاعات این نسخه در حافظه همین مرورگر ذخیره می‌شود؛ پاک‌کردن داده‌های Chrome ممکن است آن‌ها را حذف کند.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const load=(k,d=[])=>{try{return JSON.parse(localStorage.getItem('planner_'+k))??d}catch{return d}};
+const save=(k,v)=>localStorage.setItem('planner_'+k,JSON.stringify(v));
+let tx=load('tx'),tasks=load('tasks'),habits=load('habits'),goals=load('goals');
+const fmt=n=>Number(n||0).toLocaleString('fa-IR');
+$('date').value=new Date().toISOString().slice(0,10);$('taskDate').value=$('date').value;
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.tab).classList.add('active')});
+function render(){
+let inc=tx.filter(x=>x.kind==='income').reduce((s,x)=>s+x.amount,0),exp=tx.filter(x=>x.kind==='expense').reduce((s,x)=>s+x.amount,0);
+$('balance').textContent=fmt(inc-exp);$('incomeTotal').textContent=fmt(inc);$('expenseTotal').textContent=fmt(exp);$('taskDone').textContent=fmt(tasks.filter(x=>x.done).length)+' / '+fmt(tasks.length);
+$('transactions').innerHTML=tx.slice().reverse().map((x,i)=>`<div class="item"><div><b>${esc(x.desc)}</b><div class="muted">${esc(x.date)}</div></div><span class="amount ${x.kind}">${x.kind==='income'?'+':'−'} ${fmt(x.amount)}</span><button class="smallbtn" onclick="delTx(${tx.length-1-i})">حذف</button></div>`).join('')||'<p class="muted">هنوز تراکنشی ثبت نکردی.</p>';
+$('tasksList').innerHTML=tasks.map((x,i)=>`<div class="check"><input type="checkbox" ${x.done?'checked':''} onchange="toggleTask(${i})"><div style="flex:1"><b style="${x.done?'text-decoration:line-through;color:#9b8d96':''}">${esc(x.text)}</b><div class="muted">${esc(x.date)} · ${esc(x.priority)}</div></div><button class="smallbtn" onclick="delTask(${i})">حذف</button></div>`).join('')||'<p class="muted">هنوز کاری اضافه نشده.</p>';
+$('habitsList').innerHTML=habits.map((x,i)=>`<div class="check"><input type="checkbox" ${x.done===new Date().toDateString()?'checked':''} onchange="toggleHabit(${i},this.checked)"><span style="flex:1">${esc(x.text)}</span><button class="smallbtn" onclick="delHabit(${i})">حذف</button></div>`).join('')||'<p class="muted">عادت موردنظرت رو اضافه کن.</p>';
+$('goalsList').innerHTML=goals.map((x,i)=>`<div class="item"><div><b>${esc(x.text)}</b><div class="muted">هدف: ${fmt(x.amount)} تومان</div></div><button class="smallbtn" onclick="delGoal(${i})">حذف</button></div>`).join('')||'<p class="muted">هنوز هدفی ثبت نکردی.</p>';
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function addTransaction(){let amount=Number($('amount').value),desc=$('desc').value.trim();if(!amount||amount<0||!desc){alert('عنوان و مبلغ معتبر رو وارد کن.');return}tx.push({kind:$('kind').value,amount,desc,date:$('date').value});save('tx',tx);$('amount').value='';$('desc').value='';render()}
+function delTx(i){tx.splice(i,1);save('tx',tx);render()}
+function addTask(){let text=$('taskText').value.trim();if(!text)return;tasks.push({text,date:$('taskDate').value,priority:$('priority').value,done:false});save('tasks',tasks);$('taskText').value='';render()}
+function toggleTask(i){tasks[i].done=!tasks[i].done;save('tasks',tasks);render()}function delTask(i){tasks.splice(i,1);save('tasks',tasks);render()}
+function addHabit(){let text=$('habitText').value.trim();if(!text)return;habits.push({text,done:''});save('habits',habits);$('habitText').value='';render()}
+function toggleHabit(i,checked){habits[i].done=checked?new Date().toDateString():'';save('habits',habits);render()}function delHabit(i){habits.splice(i,1);save('habits',habits);render()}
+function addGoal(){let text=$('goalText').value.trim(),amount=Number($('goalAmount').value);if(!text||!amount)return;goals.push({text,amount});save('goals',goals);$('goalText').value='';$('goalAmount').value='';render()}function delGoal(i){goals.splice(i,1);save('goals',goals);render()}
+$('dailyNote').value=localStorage.getItem('planner_note')||'';function saveNote(){localStorage.setItem('planner_note',$('dailyNote').value);alert('یادداشت ذخیره شد 🌷')}
+render();
+</script>
+<script>if ("serviceWorker" in navigator) { window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {})); }</script>
+</body></html>
